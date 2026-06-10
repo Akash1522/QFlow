@@ -9,12 +9,17 @@ dotenv.config();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Create a connection pool (without database selected initially to allow creation)
+// Create a connection pool
+// Aiven (production) requires SSL; local dev does not
+const sslConfig = process.env.DB_SSL === 'true' ? { rejectUnauthorized: false } : false;
+
 const pool = mysql.createPool({
   host: process.env.DB_HOST || 'localhost',
   port: process.env.DB_PORT || 3306,
   user: process.env.DB_USER || 'root',
   password: process.env.DB_PASSWORD || 'akash@07',
+  database: process.env.DB_NAME || undefined,
+  ssl: sslConfig,
   multipleStatements: true,
   waitForConnections: true,
   connectionLimit: 10,
