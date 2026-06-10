@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, Search, Filter, Trash2, Check, X, Settings2, Droplet, CheckCircle2, AlertTriangle, XCircle, AlertCircle } from 'lucide-react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import { API_URL } from '../../config/api';
 
 const StatusBadge = ({ status, type }) => {
     const statusConfig = {
@@ -51,7 +52,7 @@ const ResourceManagement = () => {
     const fetchResources = async () => {
         try {
             const token = localStorage.getItem('token');
-            const { data } = await axios.get('http://localhost:5000/api/admin/resources', {
+            const { data } = await axios.get(`${API_URL}/admin/resources`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setFloors(data);
@@ -72,7 +73,7 @@ const ResourceManagement = () => {
             const token = localStorage.getItem('token');
             const identifiersArray = addForm.identifiers.split(',').map(i => i.trim()).filter(i => i);
             
-            await axios.post('http://localhost:5000/api/admin/resources', {
+            await axios.post(`${API_URL}/admin/resources`, {
                 type: addForm.type,
                 floor_id: addForm.floor_id,
                 identifiers: identifiersArray
@@ -92,7 +93,7 @@ const ResourceManagement = () => {
     const handleStatusChange = async (type, id, newStatus) => {
         try {
             const token = localStorage.getItem('token');
-            await axios.put(`http://localhost:5000/api/admin/resources/${type}/${id}/status`, { status: newStatus }, {
+            await axios.put(`${API_URL}/admin/resources/${type}/${id}/status`, { status: newStatus }, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             toast.success('Status updated');
@@ -105,7 +106,7 @@ const ResourceManagement = () => {
     const confirmDelete = async () => {
         try {
             const token = localStorage.getItem('token');
-            await axios.delete(`http://localhost:5000/api/admin/resources/${resourceToDelete.type}/${resourceToDelete.id}`, {
+            await axios.delete(`${API_URL}/admin/resources/${resourceToDelete.type}/${resourceToDelete.id}`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             toast.success('Resource deleted');
