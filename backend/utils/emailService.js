@@ -81,7 +81,7 @@ export const sendOtpEmail = async (toEmail, otp, name = null, context = 'registe
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': \`Bearer \${resendApiKey}\`
+        'Authorization': `Bearer ${resendApiKey}`
       },
       body: JSON.stringify({
         from: 'QFlow Management <onboarding@resend.dev>',
