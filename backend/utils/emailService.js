@@ -18,6 +18,17 @@ const transporter = nodemailer.createTransport({
 });
 
 export const sendOtpEmail = async (toEmail, otp, name = null, context = 'register') => {
+  // FAST FALLBACK: Render Free Tier blocks outbound SMTP. 
+  // Instead of waiting 2 minutes for nodemailer to time out, we bypass it immediately on Render.
+  if (process.env.RENDER) {
+    console.log('\\n=============================================');
+    console.log(`⚠️ SMTP BLOCKED BY RENDER FREE TIER`);
+    console.log(`✉️ MOCK EMAIL TO: ${toEmail}`);
+    console.log(`🔐 RECOVERY OTP IS: ${otp}`);
+    console.log('=============================================\\n');
+    return true;
+  }
+
   try {
     let mailOptions;
 
