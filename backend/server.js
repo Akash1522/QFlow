@@ -3,6 +3,7 @@ import http from 'http';
 import { Server } from 'socket.io';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import path from 'path';
 import authRoutes from './routes/authRoutes.js';
 import floorRoutes from './routes/floorRoutes.js';
 import queueRoutes from './routes/queueRoutes.js';
@@ -51,6 +52,9 @@ io.on('connection', (socket) => {
     console.log('Client disconnected', socket.id);
   });
 });
+
+// Serve static assets
+app.use('/assets', express.static(path.join(process.cwd(), 'assets')));
 
 // Routes
 app.use('/api/auth', authRoutes);

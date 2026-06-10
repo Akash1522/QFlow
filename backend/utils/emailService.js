@@ -1,79 +1,38 @@
-import nodemailer from 'nodemailer';
 import dotenv from 'dotenv';
-import path from 'path';
-import { fileURLToPath } from 'url';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
 dotenv.config();
 
-// Create a transporter using Gmail SMTP
-const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS,
-  },
-});
-
 export const sendOtpEmail = async (toEmail, otp, name = null, context = 'register') => {
-  // FAST FALLBACK: Render Free Tier blocks outbound SMTP. 
-  // Instead of waiting 2 minutes for nodemailer to time out, we bypass it immediately on Render.
-  if (process.env.RENDER) {
-    console.log('\\n=============================================');
-    console.log(`⚠️ SMTP BLOCKED BY RENDER FREE TIER`);
-    console.log(`✉️ MOCK EMAIL TO: ${toEmail}`);
-    console.log(`🔐 RECOVERY OTP IS: ${otp}`);
-    console.log('=============================================\\n');
-    return true;
-  }
-
   try {
-    let mailOptions;
+    let subject, html;
 
     if (context === 'create-admin') {
-      // Lightweight, attachment-free template specifically for Admin creation authorization
-      mailOptions = {
-        from: `"QFlow Management" <${process.env.SMTP_USER}>`,
-        to: toEmail,
-        subject: 'Authorization Required: Create New Admin',
-        html: `
-          <div style="font-family: Arial, sans-serif; max-width: 500px; margin: 0 auto; padding: 30px; border: 1px solid #e5e7eb; border-radius: 12px;">
-            <h2 style="color: #111827; margin-bottom: 20px;">Admin Authorization Required</h2>
-            <p style="color: #374151; font-size: 16px;">Hello ${name || 'Admin'},</p>
-            <p style="color: #374151; font-size: 16px;">An action to <strong>create a new administrator</strong> requires your authorization.</p>
-            
-            <div style="background-color: #f3f4f6; padding: 20px; text-align: center; border-radius: 8px; margin: 25px 0;">
-              <p style="margin: 0 0 10px 0; font-size: 14px; color: #6b7280; text-transform: uppercase; font-weight: bold;">Your OTP Code</p>
-              <span style="font-size: 32px; font-weight: bold; letter-spacing: 5px; color: #4f46e5;">${otp}</span>
-            </div>
-            
-            <p style="color: #ef4444; font-size: 14px; font-weight: bold;">This code expires in 5 minutes.</p>
-            <p style="color: #6b7280; font-size: 12px; margin-top: 30px;">If you did not request this, please secure your account immediately.</p>
+      subject = 'Authorization Required: Create New Admin';
+      html = `
+        <div style="font-family: Arial, sans-serif; max-width: 500px; margin: 0 auto; padding: 30px; border: 1px solid #e5e7eb; border-radius: 12px;">
+          <h2 style="color: #111827; margin-bottom: 20px;">Admin Authorization Required</h2>
+          <p style="color: #374151; font-size: 16px;">Hello ${name || 'Admin'},</p>
+          <p style="color: #374151; font-size: 16px;">An action to <strong>create a new administrator</strong> requires your authorization.</p>
+          
+          <div style="background-color: #f3f4f6; padding: 20px; text-align: center; border-radius: 8px; margin: 25px 0;">
+            <p style="margin: 0 0 10px 0; font-size: 14px; color: #6b7280; text-transform: uppercase; font-weight: bold;">Your OTP Code</p>
+            <span style="font-size: 32px; font-weight: bold; letter-spacing: 5px; color: #4f46e5;">${otp}</span>
           </div>
-        `
-      };
+          
+          <p style="color: #ef4444; font-size: 14px; font-weight: bold;">This code expires in 5 minutes.</p>
+          <p style="color: #6b7280; font-size: 12px; margin-top: 30px;">If you did not request this, please secure your account immediately.</p>
+        </div>
+      `;
     } else {
-      // Standard beautiful template for students (Registration/Password Reset)
-      mailOptions = {
-        from: `"QFlow Management" <${process.env.SMTP_USER}>`,
-        to: toEmail,
-        subject: 'Your QFlow Verification Code',
-        html: `
+      subject = 'Your QFlow Verification Code';
+      html = `
         <table width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color: #f3f4f6; padding: 40px 10px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
           <tr>
             <td align="center">
               
               <table width="600" border="0" cellspacing="0" cellpadding="0" style="background-color: #8b5cf6; border-radius: 20px; overflow: hidden; box-shadow: 0 15px 35px rgba(0,0,0,0.1);">
                 <tr>
-                  <!-- Background Image Container -->
-                  <td background="cid:otp-bg" bgcolor="#8b5cf6" width="600" height="340" valign="middle" style="background-image: url('cid:otp-bg'); background-size: cover; background-position: right center; background-repeat: no-repeat;">
-                    <!--[if gte mso 9]>
-                    <v:rect xmlns:v="urn:schemas-microsoft-com:vml" fill="true" stroke="false" style="width:600px;height:340px;">
-                      <v:fill type="tile" src="cid:otp-bg" color="#8b5cf6" />
-                      <v:textbox inset="0,0,0,0">
-                    <![endif]-->
+                  <!-- Background Image Hosted on our Backend -->
+                  <td background="https://qflow-backend.onrender.com/assets/otp_bg.png" bgcolor="#8b5cf6" width="600" height="340" valign="middle" style="background-image: url('https://qflow-backend.onrender.com/assets/otp_bg.png'); background-size: cover; background-position: right center; background-repeat: no-repeat;">
                     
                     <table border="0" cellspacing="0" cellpadding="0" width="100%" height="100%">
                       <tr>
@@ -104,54 +63,45 @@ export const sendOtpEmail = async (toEmail, otp, name = null, context = 'registe
                         <td width="300"></td>
                       </tr>
                     </table>
-
-                    <!--[if gte mso 9]>
-                      </v:textbox>
-                    </v:rect>
-                    <![endif]-->
                   </td>
                 </tr>
               </table>
 
               <p style="margin-top: 20px; font-size: 13px; color: #6b7280;">Secure verification by QFlow.</p>
-              
-              <!-- Hidden image to force email clients to load the CID and prevent pushing it to the bottom as an attachment -->
-              <div style="display:none; max-height:0; overflow:hidden;">
-                <img src="cid:otp-bg" width="1" height="1" alt="" style="display:none;" />
-              </div>
-
             </td>
           </tr>
         </table>
-      `,
-      attachments: [
-        {
-          filename: 'otp_bg.png',
-          path: path.join(__dirname, '..', 'assets', 'otp_bg.png'),
-          cid: 'otp-bg'
-        }
-      ]
-      };
+      `;
     }
 
-    const info = await transporter.sendMail(mailOptions);
-    console.log('Live email sent: %s', info.messageId);
-    return true;
+    const resendApiKey = process.env.RESEND_API_KEY || 're_Lt5kma7b_2zgzvSjxHdoiW9QWPiQhFtHV';
+
+    // Call Resend API directly over standard HTTPS (bypasses all blocked SMTP ports)
+    const response = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': \`Bearer \${resendApiKey}\`
+      },
+      body: JSON.stringify({
+        from: 'QFlow Management <onboarding@resend.dev>',
+        to: toEmail,
+        subject: subject,
+        html: html
+      })
+    });
+
+    const data = await response.json();
+    
+    if (response.ok) {
+      console.log('Live email sent via Resend API! ID:', data.id);
+      return true;
+    } else {
+      console.error('Resend API Error:', data);
+      return false;
+    }
   } catch (error) {
     console.error('Error sending OTP email:', error.message);
-    
-    // Render Free Tier blocks outbound SMTP (ports 25, 465, 587)
-    // As a fallback for the live demo, we print the OTP to the server logs
-    // and pretend it sent successfully so the user isn't blocked.
-    if (error.code === 'ETIMEDOUT' || error.message.includes('timeout')) {
-      console.log('\\n=============================================');
-      console.log(`⚠️ SMTP BLOCKED BY RENDER FREE TIER`);
-      console.log(`✉️ MOCK EMAIL TO: ${toEmail}`);
-      console.log(`🔐 RECOVERY OTP IS: ${otp}`);
-      console.log('=============================================\\n');
-      return true; // Return true to allow registration to proceed
-    }
-    
     return false;
   }
 };
