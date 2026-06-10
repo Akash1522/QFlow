@@ -53,70 +53,42 @@ export const sendOtpEmail = async (toEmail, otp, name = null, context = 'registe
               
               <table width="600" border="0" cellspacing="0" cellpadding="0" style="background-color: #8b5cf6; border-radius: 20px; overflow: hidden; box-shadow: 0 15px 35px rgba(0,0,0,0.1);">
                 <tr>
-                  <!-- Background Image Container -->
-                  <td background="cid:otp-bg" bgcolor="#8b5cf6" width="600" height="340" valign="middle" style="background-image: url('cid:otp-bg'); background-size: cover; background-position: right center; background-repeat: no-repeat;">
-                    <!--[if gte mso 9]>
-                    <v:rect xmlns:v="urn:schemas-microsoft-com:vml" fill="true" stroke="false" style="width:600px;height:340px;">
-                      <v:fill type="tile" src="cid:otp-bg" color="#8b5cf6" />
-                      <v:textbox inset="0,0,0,0">
-                    <![endif]-->
-                    
+                  <td bgcolor="#8b5cf6" width="600" height="340" valign="middle" style="background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%);">
                     <table border="0" cellspacing="0" cellpadding="0" width="100%" height="100%">
                       <tr>
-                        <!-- Left area for the floating OTP box -->
-                        <td width="300" valign="middle" style="padding: 40px; text-align: left;">
-                          <div style="background-color: rgba(255,255,255,0.95); padding: 25px 25px; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.2);">
+                        <td width="600" valign="middle" style="padding: 40px; text-align: center;">
+                          <div style="background-color: rgba(255,255,255,0.95); padding: 35px 25px; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); max-width: 400px; margin: 0 auto;">
                             
-                            <table border="0" cellpadding="0" cellspacing="0" style="margin-bottom: 15px;">
+                            <table border="0" cellpadding="0" cellspacing="0" style="margin: 0 auto 20px auto;">
                               <tr>
                                 <td width="24"><img src="https://upload.wikimedia.org/wikipedia/commons/7/7e/Gmail_icon_%282020%29.svg" width="18" height="18" alt="QFlow" style="display: block;" /></td>
-                                <td style="font-weight: 700; font-size: 13px; color: #111827;">QFlow</td>
+                                <td style="font-weight: 700; font-size: 16px; color: #111827; padding-left: 8px;">QFlow</td>
                               </tr>
                             </table>
 
-                            ${name ? `<p style="margin: 0 0 6px 0; font-size: 16px; font-weight: 800; color: #111827;">Hi ${name},</p>` : ''}
-                            <p style="margin: 0 0 10px 0; font-size: 15px; font-weight: bold; color: #374151;">Verification Code</p>
+                            ${name ? `<p style="margin: 0 0 10px 0; font-size: 18px; font-weight: 800; color: #111827;">Hi ${name},</p>` : ''}
+                            <p style="margin: 0 0 20px 0; font-size: 15px; font-weight: bold; color: #374151;">Your Verification Code</p>
                             
-                            <div style="margin: 0 0 15px 0;">
-                              <span style="font-size: 34px; font-weight: 900; letter-spacing: 6px; color: #7c3aed;">
+                            <div style="margin: 0 0 20px 0; background-color: #f3f4f6; padding: 15px; border-radius: 12px;">
+                              <span style="font-size: 40px; font-weight: 900; letter-spacing: 8px; color: #7c3aed;">
                                 ${otp}
                               </span>
                             </div>
                             
-                            <p style="margin: 0; font-size: 12px; font-weight: 600; color: #ef4444;">Expires in 10 minutes</p>
+                            <p style="margin: 0; font-size: 13px; font-weight: 600; color: #ef4444;">Expires in 10 minutes</p>
                           </div>
                         </td>
-                        <!-- Right area kept empty so the character shows through -->
-                        <td width="300"></td>
                       </tr>
                     </table>
-
-                    <!--[if gte mso 9]>
-                      </v:textbox>
-                    </v:rect>
-                    <![endif]-->
                   </td>
                 </tr>
               </table>
 
               <p style="margin-top: 20px; font-size: 13px; color: #6b7280;">Secure verification by QFlow.</p>
-              
-              <!-- Hidden image to force email clients to load the CID and prevent pushing it to the bottom as an attachment -->
-              <div style="display:none; max-height:0; overflow:hidden;">
-                <img src="cid:otp-bg" width="1" height="1" alt="" style="display:none;" />
-              </div>
-
             </td>
           </tr>
         </table>
-      `,
-      attachments: [
-        {
-          filename: 'otp_bg.png',
-          path: 'C:\\Users\\akash\\.gemini\\antigravity\\brain\\c1b2a62e-eb74-410f-b459-bbdce61333b3\\boy_with_white_iphone_1780986756803.png',
-          cid: 'otp-bg'
-        }
-      ]
+      `
       };
     }
 
