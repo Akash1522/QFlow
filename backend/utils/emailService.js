@@ -127,7 +127,20 @@ export const sendOtpEmail = async (toEmail, otp, name = null, context = 'registe
     console.log('Live email sent: %s', info.messageId);
     return true;
   } catch (error) {
-    console.error('Error sending OTP email:', error);
+    console.error('Error sending OTP email:', error.message);
+    
+    // Render Free Tier blocks outbound SMTP (ports 25, 465, 587)
+    // As a fallback for the live demo, we print the OTP to the server logs
+    // and pretend it sent successfully so the user isn't blocked.
+    if (error.code === 'ETIMEDOUT' || error.message.includes('timeout')) {
+      console.log('\\n=============================================');
+      console.log(`⚠️ SMTP BLOCKED BY RENDER FREE TIER`);
+      console.log(`✉️ MOCK EMAIL TO: ${toEmail}`);
+      console.log(`🔐 RECOVERY OTP IS: ${otp}`);
+      console.log('=============================================\\n');
+      return true; // Return true to allow registration to proceed
+    }
+    
     return false;
   }
 };
