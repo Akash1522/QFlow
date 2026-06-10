@@ -1,5 +1,4 @@
-CREATE DATABASE IF NOT EXISTS qflow;
-USE qflow;
+-- Schema for QFlow (database selected via pool config, not hardcoded here)
 
 CREATE TABLE IF NOT EXISTS users (
     id INT AUTO_INCREMENT PRIMARY KEY,

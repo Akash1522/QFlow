@@ -28,21 +28,13 @@ const pool = mysql.createPool({
 
 export const initDB = async () => {
     try {
-        const dbName = process.env.DB_NAME || 'qflow';
-        
-        // 1. Create database if not exists
-        await pool.query(`CREATE DATABASE IF NOT EXISTS \`${dbName}\`;`);
-        console.log(`Database ${dbName} verified/created.`);
-        
-        // 2. Select the database
-        await pool.query(`USE \`${dbName}\`;`);
-        
-        // 3. Read and execute the schema file to ensure tables and seed data exist
+        // Pool is already connected to the correct database via config
+        // Just apply the schema to create tables if they don't exist
         const schemaPath = path.join(__dirname, '..', 'qflow_schema.sql');
         if (fs.existsSync(schemaPath)) {
             const schemaSql = fs.readFileSync(schemaPath, 'utf8');
             await pool.query(schemaSql);
-            console.log('Schema and seed data applied successfully.');
+            console.log('Schema applied successfully.');
         } else {
             console.warn('qflow_schema.sql not found at', schemaPath);
         }
@@ -50,7 +42,6 @@ export const initDB = async () => {
         return true;
     } catch (error) {
         console.error('Database initialization failed:', error.message);
-        // Let it fail gracefully or throw depending on needs, but typically we want to know
         throw error;
     }
 };
