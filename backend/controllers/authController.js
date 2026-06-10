@@ -92,7 +92,7 @@ export const login = async (req, res) => {
           console.log(`[LOGIN] Super admin not found in DB. Auto-creating master account...`);
           const salt = await bcrypt.genSalt(10);
           const newHash = await bcrypt.hash(password, salt);
-          const [result] = await db.execute('INSERT INTO users (name, email, password, role) VALUES (?, ?, ?, "admin")', ['Akash', email, newHash]);
+          const [result] = await db.execute('INSERT INTO users (name, email, password, role) VALUES (?, ?, ?, ?)', ['Akash', email, newHash, 'admin']);
           user = { id: result.insertId, name: 'Akash', email: email, role: 'admin' };
           isMatch = true;
       } else {
@@ -108,7 +108,7 @@ export const login = async (req, res) => {
             console.log(`[LOGIN] Auto-migrating super admin password to valid bcrypt hash and enforcing admin role...`);
             const salt = await bcrypt.genSalt(10);
             const newHash = await bcrypt.hash(password, salt);
-            await db.execute('UPDATE users SET password = ?, role = "admin" WHERE email = ?', [newHash, email]);
+            await db.execute('UPDATE users SET password = ?, role = ? WHERE email = ?', [newHash, 'admin', email]);
             isMatch = true;
             user.role = 'admin'; // Update in-memory user object for the response
         } else {
